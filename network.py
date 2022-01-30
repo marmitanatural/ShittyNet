@@ -1,47 +1,49 @@
-import numpy as np 
-from layers.py import Input, FullyConnected, Output
+from layers import Input, FullyConnected
 
-class Network:
+
+class Network():
     def __init__(self):
-        self.layers = {"fully_connected":[]}
+        self.layers=[] 
+        self.layer_indexer=None
 
-    def add_input_layer(self, input_length):
-        self.layers["input"] =  Input(input_length=input_length)
-    
-    def add_fully_connected_layer(self, length, activation, weights, biases):
-        self.layers["fully_connected"].append(
-            FullyConnected(
-                length=length, 
-                activation=activation,
-                weights=weights, 
-                biases=biases
+    def add_input_layer(self, layer_size):
+        self.layers.append(
+            Input(
+                layer_size=layer_size
             )
+        )
+        self.layer_indexer=0
 
-    def add_output_layer(self):
-        self.layers["output"] = Output(activation=activation, weights=weights, biases=biases)
+    def add_fully_connected_layer(self, layer_size, activation_function):
+        if self.layer_indexer is None:
+            return "Please use an input layer as the first layer of the network."
 
-    def set_network_parameters(self, loss_function, optimizer)
+        self.layers.append(
+            FullyConnected(
+                layer_size=layer_size,
+                previous_layer_size=getattr(self.layers[self.layer_indexer], "layer_size"), 
+                activation_function=activation_function
+            )
+        )
+
+        self.layer_indexer+=1
+
+    def set_training_parameters(self, epochs, loss_function):
+        self.epochs=epochs
         self.loss_function=loss_function
-        self.optimizer=optimizer
-
-    def train(self, epochs):
-        self.epochs=epochs 
-
-        for i in range(self.epochs):
-            pass
-
-
-        
-
+    
+    def feed_forward(self, input_data):
+        pass
 
 """
-model = Network()
+nn = Network()
 
-model.add_input_layer(inputs=numpy_array)
-model.add_fully_connected_layer(output_size=5, input_size=len(numpy_array) activation=relu, weights=random, biases=random)
-model.add_output_layer(input_size=1, activation=identity, weights=random, biases=random)
+nn.add_input_layer(layer_size=5)
+nn.add_fully_connected_layer(layer_size=4, activation_function=lambda x: 5*x)
+nn.add_fully_connected_layer(layer_size=2, activation_function=lambda x: 2*x)
+nn.add_fully_connected_layer(layer_size=1, activation_function=lambda x: x)
+nn.set_training_parameters(epochs=500, loss_function="squared")
 
-model.set_training_parameters(loss_function=loss, optimizer=adam)
-
-model.train(epochs=500)
+input_data -> network -> prediction -> compute loss -> back_propagation
+ (not sure if this is done for every training example or for batches or per epoch)
 """

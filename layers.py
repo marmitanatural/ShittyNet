@@ -1,46 +1,37 @@
+from numpy import number
+
 import numpy as np
-from layers import Neuron
+from neuron import Neuron
 
 class Input:
-    def __init__(self, input_length):
-        self.input_length
-    
-    def compute(self, inputs):
-        return self.inputs 
+    def __init__(self, layer_size):
+        self.layer_size=layer_size
+        
+    def compute(self, input_data):
+        return input_data
 
 class FullyConnected:
-    def __init__(self, output_size, input_size, activation)
-        self.output_size = output_size 
-        self.neurons = np.empty(self.output_size)
-        self.weights = np.random.rand(self.input_size)
-        self.biases = np.random.rand(self.input_size)
+    def __init__(self, layer_size, previous_layer_size, activation_function):
+        self.layer_size = layer_size 
+        self.previous_layer_size = previous_layer_size
+        self.neurons = []
         
-        for i in range(self.output_size):
-            self.neurons[i] = Neuron(
-                activation=activation,
-                weights=self.weights,
-                biases=self.biases
+        for i in range(layer_size):
+            self.neurons.append(
+                Neuron(
+                    activation_function=activation_function,
+                    weights=np.random.rand(previous_layer_size),
+                    bias=np.random.rand(1)
+                )   
             )
 
-    def compute(self, inputs):
-        output = np.empty(self.output_size)
+    def compute(self,input_data):
+        layer_output = np.empty(self.layer_size)
 
-        for i in range(self.output_size):
-            output[i] = neurons[i].compute(inputs=inputs)
-
-        return output 
-
-class Output:
-    def __init__(self, input_size, weights, biases, activation)
-        self.weights = np.random.rand(self.input_size)
-        self.biases = np.random.rand(self.input_size)
-        self.output_neuron = Neuron(
-            activation=activation,
-            weights=weights,
-            biases=biases
-        )
-
-    def compute(self,inputs):
-        return self.output_neuron.compute(inputs=inputs)      
-        
-        
+        for i in range(self.layer_size):
+            layer_output[i] = self.neurons[i].compute(
+                input_data=input_data
+            )
+                
+        return layer_output
+    
