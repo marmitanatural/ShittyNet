@@ -34,34 +34,28 @@ class Network:
         self.loss_function = loss_function
 
     def feed_forward(self, input_data):
-        layer_input = input_data
-        for index in range(1, self.layer_indexer + 1):
-            layer_output = np.empty(getattr(self.layers[index], "layer_size"))
-            for index, neuron in enumerate(getattr(self.layers[index], "neurons")):
-                layer_output[index] = neuron.compute(layer_input)
-            layer_input = layer_output
+        pass_forward = input_data
+        for layer_index in range(1, self.layer_indexer + 1):
+            pass_forward = self.layers[layer_index].compute(pass_forward)
 
-        return layer_output
+        return pass_forward
 
-    def train(self, training_data, test_data):
-        # training data np.arr(np.arr, ....)
-        for item, label in zip(training_data, test_data):
+    def train(self, training_data, labels):
+        for item, label in zip(training_data, labels):
             prediction = self.feed_forward(item)
-            loss = self.loss_function.compute(np.array(label), prediction)
+            loss = self.loss_function.compute(prediction, label)
 
-            # backprop to update weights
-        pass
+        return loss
+        # do backprop to compute gradient and update weights
 
 
 nn = Network()
 
-nn.add_input_layer(layer_size=7)
-nn.add_fully_connected_layer(layer_size=5, activation_function=ReLU())
-nn.add_fully_connected_layer(layer_size=5, activation_function=ReLU())
+nn.add_input_layer(layer_size=3)
+nn.add_fully_connected_layer(layer_size=2, activation_function=ReLU())
 nn.add_fully_connected_layer(layer_size=1, activation_function=Linear())
 nn.set_training_parameters(epochs=100, loss_function=MSE())
-print(nn.feed_forward(np.array([1, 2, 3, 1, 2, 3, 1])))
-
+nn.train(training_data=np.array([[0.45, 0.9, 0.3]]), labels=np.array([0.7]))
 """
 input_data -> network -> prediction -> compute loss -> back_propagation
  (not sure if this is done for every training example or for batches or
