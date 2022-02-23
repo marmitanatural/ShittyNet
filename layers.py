@@ -11,15 +11,14 @@ class FullyConnected:
         self.layer_size = layer_size
         self.previous_layer_size = previous_layer_size
         self.activation_function = activation_function
-        self.augmented_weights = np.random.random((layer_size, previous_layer_size + 1))
+        self.weights = np.random.random((layer_size, previous_layer_size))
+        self.biases = np.random.random((layer_size))
 
     def compute(self, input_data):
-        input_data = np.append(input_data, 1)
-
-        raw_output = np.matmul(self.augmented_weights, input_data)
+        unactivated_output = np.add(np.matmul(self.weights, input_data), self.biases)
 
         activated_output = np.array(
-            [self.activation_function.compute(x) for x in raw_output]
+            [self.activation_function.compute(x) for x in unactivated_output]
         )
 
-        return activated_output
+        return unactivated_output, activated_output
