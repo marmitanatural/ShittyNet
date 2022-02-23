@@ -1,4 +1,4 @@
-from layers import Input, FullyConnected
+from layers import FullyConnected
 from activation_functions import Linear, ReLU
 from loss_functions import MSE
 import numpy as np

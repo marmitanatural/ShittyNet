@@ -1,11 +1,6 @@
 import numpy as np
 
 
-class Input:
-    def __init__(self, layer_size):
-        self.layer_size = layer_size
-
-
 class FullyConnected:
     def __init__(self, layer_size, previous_layer_size, activation_function):
         self.layer_size = layer_size
