@@ -8,6 +8,8 @@ class FullyConnected:
         self.activation_function = activation_function
         self.weights = np.random.random((layer_size, previous_layer_size))
         self.biases = np.random.random((layer_size))
+        self.gradient_weights = np.array([])
+        self.gradient_bias = np.array([])
 
     def compute(self, input_data):
         unactivated_output = np.add(np.matmul(self.weights, input_data), self.biases)
