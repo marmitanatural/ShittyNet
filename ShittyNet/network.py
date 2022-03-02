@@ -1,6 +1,4 @@
 from layers import FullyConnected
-from activation_functions import Linear, ReLU
-from loss_functions import MSE
 import numpy as np
 
 
@@ -30,9 +28,7 @@ class Network:
             self.layers.append(
                 FullyConnected(
                     layer_size=layer_size,
-                    previous_layer_size=getattr(
-                        self.layers[self.layer_indexer - 1], "layer_size"
-                    ),
+                    previous_layer_size=getattr(self.layers[-1], "layer_size"),
                     activation_function=activation_function,
                 )
             )
@@ -65,7 +61,7 @@ class Network:
         )
 
     def backpropagate_error(self):
-        for index in range(self.layer_indexer):
+        for index in range(self.layer_indexer + 1):
             self.delta.append(
                 np.multiply(
                     np.matmul(
@@ -83,12 +79,12 @@ class Network:
 
     def compute_gradient_update_weights(self, item):
         for index, layer in enumerate(self.layers):
-            gradient_biases = self.delta[index]
+            gradient_biases = self.delta[index + 1]
             gradient_weights = np.matmul(
                 self.a[index - 1].reshape(len(self.a[index - 1]), 1)
                 if index != 0
                 else item.reshape(len(item), 1),
-                self.delta[index].reshape(len(self.delta[index]), 1).T,
+                self.delta[index + 1].reshape(len(self.delta[index + 1]), 1).T,
             ).T
 
             layer.weights = np.subtract(
@@ -99,24 +95,17 @@ class Network:
                 layer.biases, self.learning_rate * gradient_biases
             )
 
+    def reset(self):
+        self.z = []
+        self.a = []
+        self.delta = []
+
     def train(self, training_data, labels):
-        for item, label in zip(training_data, labels):
-            prediction = self.feed_forward(item)
-            self.compute_output_error(label, prediction)
-            self.backpropagate_error()
-            self.compute_gradient(item)
-
-
-nn = Network()
-
-nn.add_input_layer(layer_size=2)
-nn.add_fully_connected_layer(layer_size=2, activation_function=ReLU())
-nn.add_fully_connected_layer(layer_size=1, activation_function=Linear())
-nn.set_training_parameters(epochs=100, learning_rate=0.0001, loss_function=MSE())
-nn.train(training_data=np.array([[0.5, 0.4]]), labels=np.array([0.7, 0.8]))
-
-"""
-input_data -> network -> prediction -> compute loss -> back_propagation
- (not sure if this is done for every training example or for batches or
- per epoch)
-"""
+        for epoch_counter in range(self.epochs):
+            for item, label in zip(training_data, labels):
+                prediction = self.feed_forward(item)
+                self.compute_output_error(label, prediction)
+                self.backpropagate_error()
+                self.compute_gradient_update_weights(item)
+                self.reset()
+        print("training complete")

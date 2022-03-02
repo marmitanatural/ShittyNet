@@ -1,17 +1,40 @@
-## Artificial Neurons
-The most fundamental unit of the neural network is the artificial neuron (inspired by the behavior of biological neurons). Mathematically, it can be represented by:
-    $$ y = \sigma(w_i*x_i + b) $$
-where $y$ is the output, $\sigma$ is the activation function, $w_i$ is a vector of weights, $x_i$ are the inputs ($x_i$ and $w_i$ are the same length, in fact $x_i$ determines the number of weights), $b$ is the bias.
+# ShittyNet :poop:
+In the wise words of George Hotz:
+<center>"this may not be the best deep learning framework, but it is a deep learning framework".</center>
 
-## Neural Networks
-Are stacks of layers of artificial neurons. There are 2 priviledged layers. 
-1. The input layer: it does no processing of the incoming data (so no weights, biases or activation function), it simply 'fans' the data out and feeds it to the next layer.
-2. The output layer: for regression, generally a single neuron. For classification, 2 or more. It generally has a different activation function than the hidden layers.
-The intermediate layers, or 'hidden' layers generally take the same form for simple feed forward networks. In such a setting, they are fully connected to the previous layer and fully connected to the following one. 
+## Introduction
+ShittyNet is a from scratch implementation of a Neural Network using only numpy and python's default data structures. It was created by the author to gain a beyond conceptual understanding of how a neural network learns and why this might be a challenging to implement in code. Indeed, this is entirely useless for practical purposes but was an interesting exercise.
 
-TO DO:
-    Verify compute function for neuron and for layer
-    Make feed forward function for entire network
-    Make a compute loss function for the network 
-    Figure out how to use backprop to update the weights and biases
-    Package these into a training function
+It can only learn for single output regression tasks (there are no classification loss functions in the package, nor has the case of multiple outputs been implemented). It uses the most vanilla and traditional flavour of gradient descent to learn, with backpropagation being used to compute the gradient. It updates the gradient after every training example has been fed through the network.
+
+## Sample Usage
+    from ShittyNet.network import Network
+    from ShittyNet.loss_functions import MSE
+    from ShittyNet.activation_functions import Linear, ReLU
+
+    training_data = np.random.rand(5000,5)
+    labels = np.random.rand(5000,1)
+
+    nn = Network()
+
+    nn.add_input_layer(layer_size=5)
+    nn.add_fully_connected_layer(layer_size=4, activation_function=ReLU())
+    nn.add_fully_connected_layer(layer_size=2, activation_function=ReLU())
+    nn.add_fully_connected_layer(layer_size=1, activation_function=Linear())
+
+    nn.set_training_parameters(epochs=2, learning_rate=0.01, loss_function=MSE())
+    nn.train(training_data=training_data, labels=labels)
+
+## To Do
+- See if the training actually works by checking if it converges on some common dataset (after all the index gymnastics in this draft of ShittyNet, there are bound to be some bugs).
+- Add a training progress logging mechanism.
+- Add a prediction function to use the trained model to predict.
+- Adapt to accept multiple outputs and adapt for a wide variety of tasks by putting in the relevant loss functions.
+- Add regularization or early stopping.
+- Add batch mechanism.
+- Massive refactor to improve performance and readability as currently it is definitely a bit like :smiling_face_with_tear:	
+- Add modular type of API like Keras functional API and 'exotic' layers like dropout, normalization, concat, dot, ..
+- The list never ends, in effect one could keep going until you copy everything in the Keras repository.
+
+## Disclaimer
+Please do not think that this is an industrial strength deep learning library to replace Tensorflow or PyTorch. It is not. It is a little experiment to deepen the author's knowledge of deep learning (beyond a conceptual understanding). It is probably riddled with bugs. It will probably never be actively updated. 
