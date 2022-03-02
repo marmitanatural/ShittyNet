@@ -8,6 +8,7 @@ ShittyNet is a from scratch implementation of a Neural Network using only numpy 
 It can only learn for single output regression tasks (there are no classification loss functions in the package, nor has the case of multiple outputs been implemented). It uses the most vanilla and traditional flavour of gradient descent to learn, with backpropagation being used to compute the gradient. It updates the gradient after every training example has been fed through the network.
 
 ## Sample Usage
+    import numpy as np
     from ShittyNet.network import Network
     from ShittyNet.loss_functions import MSE
     from ShittyNet.activation_functions import Linear, ReLU
